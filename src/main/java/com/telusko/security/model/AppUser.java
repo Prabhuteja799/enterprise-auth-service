@@ -1,20 +1,11 @@
 package com.telusko.security.model;
 
 
-import com.telusko.security.request.UserRequest;
-import com.telusko.security.responseDTO.AppUserDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
-import javax.management.relation.Role;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
 
 
 @Getter
@@ -31,26 +22,78 @@ public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
+
     String username;
     String password;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
-    Set<UserRoles> userRoles = new HashSet<>();
+    Set<UserRole> userRoles = new HashSet<>();
 
-    public void addRole(Roles role) {
-        UserRoles userRole = new UserRoles(this, role);
-        this.userRoles.add(userRole);
-        role.getUserRoles().add(userRole);
+    public void addRole(Role role) {
+
+        //relying on DB unique constraint(uk_user_role) is even better
+//        if (userRoles.stream()
+//                .anyMatch(ur -> ur.getRole().equals(role))) {
+//            return;
+//        }
+
+        UserRole link = new UserRole(this,role);
+        this.userRoles.add(link);
+        role.getUserRoles().add(link);
+
+
 
     }
 
-    public AppUserDTO toAppUserDTO( ){
+    public void removeRole(Role role){
 
-        Set<RoleName> roles = this.getUserRoles().stream()
-                .map(ur-> ur.getRole().getRole() )
-                .collect(Collectors.toSet());
+        /**
+        userRoles.removeIf(ur-> {
+                    boolean match = (ur.getRole().getRole() == role.getRole());
+                    if(match){
+                        role.getUserRoles().remove(ur);
+                        ur.setUser(null);
+                        ur.setRole(null);
+                    }
+                    return match;
+                });
+         **/
+        if(role.getRole() == RoleName.ROLE_ADMIN){
+            throw new IllegalStateException("Admin role cannot be removed");
+        }
 
-        return  new AppUserDTO(this.id,this.username,roles);
+        UserRole link = userRoles.stream().
+                filter(ur-> ur.getRole().getRole() == role.getRole())
+                .findFirst()
+                .orElseThrow(()-> new IllegalStateException("Role not assigned"));
+
+        this.userRoles.remove(link);
+        role.getUserRoles().remove(link);
+
+        link.setRole(null);
+        link.setUser(null);//Even though orphanRemoval will delete the row…
+        // Null-ing prevents: stale references,accidental reuse,weird persistence states.It is defensive coding.
+
+
     }
 
+
+
+    public void clearRoles() {
+
+        for(UserRole ur :  new HashSet<>(this.userRoles)){  //if you are modifying (add,remove or clear)
+            // the SAME collection you are iterating.Java detects this and throws:ConcurrentModificationException
+            //that's why copying fixes it.
+            //we can send this to above removeRole function, but it goes through filters,unnecessary for this.
+            this.userRoles.remove(ur);
+            ur.getRole().getUserRoles().remove(ur);
+            ur.setRole(null);
+            ur.setUser(null);
+        }
+
+//        userRoles.forEach(ur-> ur.getRole().getUserRoles().remove(ur));
+//        userRoles.clear();
+
+
+    }
 }

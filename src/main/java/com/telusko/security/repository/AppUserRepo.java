@@ -1,6 +1,7 @@
 package com.telusko.security.repository;
 
 import com.telusko.security.model.AppUser;
+import jakarta.validation.Valid;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +24,15 @@ public interface AppUserRepo extends JpaRepository<AppUser,String> {
             WHERE u.username =:username
             """)
     Optional<AppUser> findByUsernameWithRoles(@Param("username") String username);
+
+
+    @Query("""
+            
+            SELECT u
+            FROM AppUser u
+            LEFT JOIN FETCH u.userRoles ur
+            LEFT JOIN FETCH ur.role r
+            WHERE u.id=:userId
+            """)
+    Optional<AppUser> findByIdWithRoles(@Param("userId") String userId);
 }
