@@ -1,4 +1,4 @@
-package com.telusko.Security.model;
+package com.telusko.security.model;
 
 public enum RoleName {
 

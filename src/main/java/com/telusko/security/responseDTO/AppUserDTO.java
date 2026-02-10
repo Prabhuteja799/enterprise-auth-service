@@ -1,16 +1,19 @@
-package com.telusko.Security.responseDTO;
+package com.telusko.security.responseDTO;
 
 
-import com.telusko.Security.model.RoleName;
+import com.telusko.security.model.RoleName;
 import lombok.Builder;
 
 import java.util.Set;
 
-@Builder
+
 public record AppUserDTO (
         String id,
         String username,
         Set<RoleName> roles){}
+
+
+
 
 //    public AppUserDTO(String id, String username, String password) {
 //        this.id = id;

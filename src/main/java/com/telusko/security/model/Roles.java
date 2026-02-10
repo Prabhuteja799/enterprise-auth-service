@@ -1,10 +1,9 @@
-package com.telusko.Security.model;
+package com.telusko.security.model;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -13,19 +12,19 @@ import java.util.Set;
 @Builder
 @ToString
 @Entity
+
 public class Roles {
 
     @Id
-            @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
     @Enumerated(EnumType.STRING)
+    @Column(unique = true,nullable = false)
     RoleName role;
 
-
-    @ManyToMany(mappedBy = "roles")
-    Set<AppUser> userId;
-
+    @OneToMany(mappedBy = "role" , cascade = CascadeType.ALL ,orphanRemoval = true)
+    List<UserRoles> userRoles;
 
 
 }

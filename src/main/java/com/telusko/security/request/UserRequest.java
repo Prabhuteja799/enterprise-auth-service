@@ -1,13 +1,15 @@
-package com.telusko.Security.request;
+package com.telusko.security.request;
 
-import com.telusko.Security.model.AppUser;
-import com.telusko.Security.model.RoleName;
-import com.telusko.Security.model.Roles;
+import com.telusko.security.model.AppUser;
+import com.telusko.security.model.RoleName;
+import com.telusko.security.model.Roles;
+import com.telusko.security.model.UserRoles;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
+import javax.management.relation.Role;
 import java.util.Set;
 
 
@@ -26,15 +28,6 @@ public class UserRequest {
     Set<RoleName> roles;
 
 
-    public AppUser toAppUser(Set<Roles> roles1) {
 
-
-        return AppUser.builder()
-                .username(this.username)
-                .password(this.password)
-                .roles(roles1)
-                .build();
-
-    }
 
 }

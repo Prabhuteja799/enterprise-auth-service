@@ -1,11 +1,10 @@
-package com.telusko.Security.controller;
+package com.telusko.security.controller;
 
 
-import com.telusko.Security.request.UserRequest;
-import com.telusko.Security.responseDTO.AppUserDTO;
-import com.telusko.Security.service.AppUserService;
+import com.telusko.security.request.UserRequest;
+import com.telusko.security.responseDTO.AppUserDTO;
+import com.telusko.security.service.AppUserService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 

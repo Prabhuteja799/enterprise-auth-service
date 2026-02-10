@@ -1,4 +1,4 @@
-package com.telusko.Security.config;
+package com.telusko.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

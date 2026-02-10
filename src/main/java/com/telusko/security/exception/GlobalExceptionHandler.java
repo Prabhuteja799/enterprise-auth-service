@@ -1,4 +1,4 @@
-package com.telusko.Security.exception;
+package com.telusko.security.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

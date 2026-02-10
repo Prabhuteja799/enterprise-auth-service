@@ -1,4 +1,4 @@
-package com.telusko.Security.exception;
+package com.telusko.security.exception;
 
 public class InvalidRoleException extends CustomException {
     public InvalidRoleException(ExceptionCode exceptionCode) {
