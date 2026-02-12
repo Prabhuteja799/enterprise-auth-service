@@ -15,7 +15,6 @@ import com.telusko.security.request.UserRequest;
 import com.telusko.security.responseDTO.AppUserDTO;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +41,7 @@ public class AppUserService {
     @Transactional(readOnly = true)
     public AppUserDTO getAppUserByName(String username) {
 
-        AppUser user =  appUserRepo.findByUsernameWithRoles(username).orElseThrow(()->
+        AppUser user =  appUserRepo.findNameofUserWithRoles(username).orElseThrow(()->
                 new UserException(ExceptionCode.USER_NOT_FOUND));
         return toAppUserDTO(user);
     }
@@ -57,7 +56,8 @@ public class AppUserService {
             throw new UserException(ExceptionCode.USER_ALREADY_EXISTS);
         }
 
-        Role defaulrole = rolesRepo.findByRole(RoleName.ROLE_USER).get();
+        Role defaulrole = rolesRepo.findByRole(RoleName.ROLE_USER).
+                orElseThrow(()->new InvalidRoleException(ExceptionCode.INVALID_ROLE));
 
         AppUser user = AppUser.builder()
                 .username(request.getUsername())
@@ -147,6 +147,7 @@ public class AppUserService {
 
         return toAppUserDTO(user);
     }
+
 
 
     private AppUserDTO toAppUserDTO( AppUser user){

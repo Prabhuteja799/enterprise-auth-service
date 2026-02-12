@@ -1,7 +1,6 @@
 package com.telusko.security.repository;
 
 import com.telusko.security.model.AppUser;
-import jakarta.validation.Valid;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,7 +12,7 @@ import java.util.Optional;
 public interface AppUserRepo extends JpaRepository<AppUser,String> {
 
 
-    Optional <AppUser > findByUsername(String userName);
+//    Optional <AppUser > findByUsername(String userName);
 
 
     @Query(""" 
@@ -23,7 +22,7 @@ public interface AppUserRepo extends JpaRepository<AppUser,String> {
             LEFT JOIN FETCH ur.role r
             WHERE u.username =:username
             """)
-    Optional<AppUser> findByUsernameWithRoles(@Param("username") String username);
+    Optional<AppUser> findNameofUserWithRoles(@Param("username") String username);
 
 
     @Query("""
@@ -35,4 +34,6 @@ public interface AppUserRepo extends JpaRepository<AppUser,String> {
             WHERE u.id=:userId
             """)
     Optional<AppUser> findByIdWithRoles(@Param("userId") String userId);
+
+    Optional<AppUser> findByUsername(String username);
 }

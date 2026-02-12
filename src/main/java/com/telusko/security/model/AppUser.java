@@ -13,10 +13,11 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
+@ToString(exclude = "userRoles")
 @Entity
 @Table(name = "app_user", uniqueConstraints = {
         @UniqueConstraint(name = "uk_app_user_username", columnNames = "username")})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class AppUser {
 
     @Id
@@ -26,6 +27,7 @@ public class AppUser {
     String username;
     String password;
 
+    @Builder.Default
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     Set<UserRole> userRoles = new HashSet<>();
 

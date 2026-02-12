@@ -12,9 +12,10 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude ={ "user" , "role"})
 @Entity
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(uniqueConstraints = {@UniqueConstraint(name = "uk_user_role" ,
         columnNames = {"user_id" , "role_id"})},
         indexes = {@Index(name = "idx_user_role_user" ,columnList = "user_id"),

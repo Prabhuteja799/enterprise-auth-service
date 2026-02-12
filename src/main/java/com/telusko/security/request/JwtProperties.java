@@ -1,0 +1,13 @@
+package com.telusko.security.request;
+
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties(prefix = "security.jwt")
+public record JwtProperties(
+        String secret,
+        String issuer,
+        long accessExpiration,
+        long refreshExpiration
+) {
+}
