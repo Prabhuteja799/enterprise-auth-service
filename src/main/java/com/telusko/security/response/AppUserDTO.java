@@ -1,8 +1,7 @@
-package com.telusko.security.responseDTO;
+package com.telusko.security.response;
 
 
 import com.telusko.security.model.RoleName;
-import lombok.Builder;
 
 import java.util.Set;
 

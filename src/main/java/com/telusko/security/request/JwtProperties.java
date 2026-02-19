@@ -8,6 +8,7 @@ public record JwtProperties(
         String secret,
         String issuer,
         long accessExpiration,
-        long refreshExpiration
+        long refreshExpiration,
+        long clockSkewSeconds
 ) {
 }

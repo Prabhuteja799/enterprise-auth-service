@@ -4,7 +4,7 @@ package com.telusko.security.controller;
 import com.telusko.security.request.PatchUserRolesRequest;
 import com.telusko.security.request.UpdateUserRolesRequest;
 import com.telusko.security.request.UserRequest;
-import com.telusko.security.responseDTO.AppUserDTO;
+import com.telusko.security.response.AppUserDTO;
 import com.telusko.security.service.AppUserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

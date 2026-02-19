@@ -2,7 +2,7 @@ package com.telusko.security.service;
 
 
 import com.telusko.security.exception.ExceptionCode;
-import com.telusko.security.exception.InvalidRoleException;
+import com.telusko.security.exception.RoleException;
 import com.telusko.security.exception.UserException;
 import com.telusko.security.model.AppUser;
 import com.telusko.security.model.RoleName;
@@ -12,7 +12,7 @@ import com.telusko.security.repository.RolesRepo;
 import com.telusko.security.request.PatchUserRolesRequest;
 import com.telusko.security.request.UpdateUserRolesRequest;
 import com.telusko.security.request.UserRequest;
-import com.telusko.security.responseDTO.AppUserDTO;
+import com.telusko.security.response.AppUserDTO;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -57,7 +57,7 @@ public class AppUserService {
         }
 
         Role defaulrole = rolesRepo.findByRole(RoleName.ROLE_USER).
-                orElseThrow(()->new InvalidRoleException(ExceptionCode.INVALID_ROLE));
+                orElseThrow(()->new RoleException(ExceptionCode.INVALID_ROLE));
 
         AppUser user = AppUser.builder()
                 .username(request.getUsername())
@@ -88,7 +88,7 @@ public class AppUserService {
         for(RoleName roleName : rolesRequest.roles()){
 
             Role role = rolesRepo.findByRole(roleName).
-                    orElseThrow(()->new InvalidRoleException(ExceptionCode.INVALID_ROLE));
+                    orElseThrow(()->new RoleException(ExceptionCode.INVALID_ROLE));
 
             existed.addRole(role);
 
@@ -127,7 +127,7 @@ public class AppUserService {
         if(add != null) {
             for(RoleName roleName : add){
                 Role role = rolesRepo.findByRole(roleName).
-                        orElseThrow(()->new InvalidRoleException(ExceptionCode.INVALID_ROLE));
+                        orElseThrow(()->new RoleException(ExceptionCode.INVALID_ROLE));
                 user.addRole(role);
 
             }
@@ -139,7 +139,7 @@ public class AppUserService {
         if(remove != null) {
             for (RoleName roleName : remove) {
                 Role role = rolesRepo.findByRole(roleName)
-                        .orElseThrow(() -> new InvalidRoleException(ExceptionCode.INVALID_ROLE));
+                        .orElseThrow(() -> new RoleException(ExceptionCode.INVALID_ROLE));
 
                 user.removeRole(role);
             }

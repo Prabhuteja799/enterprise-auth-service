@@ -12,6 +12,7 @@ import io.jsonwebtoken.security.Keys;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class JwtUtil {
@@ -20,6 +21,7 @@ public class JwtUtil {
     private String issuer;
     private long accessExpiration;
     private long refreshExpiration;
+    private long clockSkewSeconds;
 
 
     public JwtUtil(JwtProperties jwtProperties){
@@ -27,32 +29,51 @@ public class JwtUtil {
         this.issuer = jwtProperties.issuer();
         this.accessExpiration= jwtProperties.accessExpiration();
         this.refreshExpiration= jwtProperties.refreshExpiration();
+        this.clockSkewSeconds = jwtProperties.clockSkewSeconds();
 
     }
+
 
 
     public String generateAcessToken(UserDetails userDetails){
 
         List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-        Date now= new Date();
-        Date expiry = new Date(now.getTime()+accessExpiration);
+
+        return buildtoken( userDetails.getUsername() , roles,accessExpiration,"ACCESS");
+
+    }
+
+    public String generateRefreshToken(UserDetails userDetails){
+
+        return buildtoken(userDetails.getUsername(), List.of(), refreshExpiration,"REFRESH");
+    }
+
+    public String buildtoken(String username,List<String> roles ,  long expiration , String tokenType){
+
+        Date now = new Date();
+        Date expiry = new Date(now.getTime()+expiration);
+
+        String jti =UUID.randomUUID().toString();
 
         return Jwts.builder().
-                subject(userDetails.getUsername())
+                subject(username)
                 .claim("roles", roles)
-                .claim("type", "ACCESS")
+                .claim("type", tokenType)
                 .issuer(issuer)
                 .issuedAt(now)
+                .id(jti)
                 .expiration(expiry)
                 .signWith(key)
                 .compact();
 
     }
 
+
     public Claims parseClaims(String token){
         return Jwts.parser()
                 .verifyWith(key)
                 .requireIssuer(issuer)   //this is optional,only if you want to check issuer when using diff servers (prod/dev)
+                .clockSkewSeconds(clockSkewSeconds)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
@@ -72,10 +93,17 @@ public class JwtUtil {
         return (userDetails.getUsername().equals(claims.getSubject() )
         && "ACCESS".equals(claims.get("type")))
             && !expired(claims.getExpiration());
-
     }
 
     private boolean expired(Date expiration) {
         return expiration.before(new Date());
+    }
+
+    public boolean isRefreshTokenValid( String refreshToken) {
+
+        Claims claims = parseClaims(refreshToken);
+
+        return ("REFRESH").equals(claims.get("type", String.class))
+                && !expired(claims.getExpiration());
     }
 }
